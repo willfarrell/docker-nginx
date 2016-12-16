@@ -1,0 +1,25 @@
+version: "2"
+
+services:
+  nginx:
+    #image: watsco/nginx
+    build: .
+    restart: always
+    mem_limit: 256m
+    cpu_shares: 1024
+    read_only: false
+    security_opt:
+     - "no-new-privileges"
+    ports:
+     - "80:80"
+     - "443:443"
+    env_file:
+     - nginx.sample.env
+    volumes:
+     - "/var/log/nginx"
+     #- "/etc/ssl"
+
+  node:
+    build: test/node
+    ports:
+     - "3000:3000"

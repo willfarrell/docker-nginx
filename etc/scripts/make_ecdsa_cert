@@ -1,0 +1,49 @@
+#!/bin/bash
+
+cd /etc/ssl;
+
+if [ -z "$1" ]; then
+    echo "param domain is required."
+    exit 1
+fi
+
+# cert.pem  chain.pem  fullchain.pem  privkey.pem
+
+make() {
+	# Check if $1 exists
+	openssl version
+	#openssl ecparam -list_curves
+	echo "-----> Create a new named curve ($1)"
+	openssl ecparam -genkey -name secp384r1 -out privkey.pem
+	
+	# Add password
+	#openssl ec -in privkey.pem -des3 -out privkey.pem
+	
+	echo "-----> Make a certificate request, request signed via SHA512 ($1)"
+	if [ $1 ]; then
+	    echo -e "\n\n\n\n\n$1\n\n\n\n" | openssl req -new -sha512 -key privkey.pem -nodes -out reqcert.pem
+	else
+	    echo "" && echo "Tip: Common Name: *.domain.com" && echo ""
+	    openssl req -new -sha512 -key privkey.pem -nodes -out reqcert.pem
+	fi
+	openssl req -noout -text -in reqcert.pem # Verify CSR
+	
+	echo "-----> Create (self-signed) certificate. This certificate will sign using SHA512 ($1)"
+
+	echo -e "\n\n\n\n\n$1\n\n\n\n" | openssl req -x509 -sha512 -days 1095 -key privkey.pem -in reqcert.pem -out cert.pem
+
+	# make chains
+	cp cert.pem chain.pem
+	cp cert.pem fullchain.pem
+
+	#echo "-----> Export the certificate and private key, AES256 encrypt it ($1)"
+	#openssl pkcs12 -export -aes256 -out privkey.pem.pfx -in cert.pem.pem -inkey privkey.pem -name "ECC-cert"
+	
+	#echo "-----> Make public key from CRT"
+	#openssl x509 -pubkey -noout -in cert.pem > pubkey.pem
+}
+
+
+make $1
+
+echo "Done!"

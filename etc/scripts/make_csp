@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# CSP
+function csp {
+    CSP_HEADER_NAME=Content-Security-Policy-Report-Only
+    if [ "${NGINX_ENV}" == "production" ]; then
+        CSP_HEADER_NAME=Content-Security-Policy
+    fi
+    find /etc/nginx/conf.d -type f -name "*.conf" -print0 | xargs -0 sed -i "s@Content-Security-Policy-Report-Only@${CSP_HEADER_NAME}@g"
+}
+
+csp

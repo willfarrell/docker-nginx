@@ -1,3 +1,8 @@
+.idea
+*.iml
+
+etc/nginx/conf.d/sample.conf
+
 # Logs
 logs
 *.log

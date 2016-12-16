@@ -1,0 +1,7 @@
+#!/bin/bash
+
+cd /etc/ssl
+
+openssl dhparam 4096 -out dhparam.pem
+
+echo "Done!"

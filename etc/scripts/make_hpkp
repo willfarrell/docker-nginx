@@ -1,0 +1,28 @@
+#!/bin/bash
+
+function cert_dgst {
+    openssl x509 -noout -in $1 -pubkey | openssl asn1parse -noout -inform pem -out /etc/ssl/tmp.pem
+    echo $(openssl dgst -sha256 -binary /etc/ssl/tmp.pem | openssl enc -base64)
+}
+
+function hpkp {
+    # https://report-uri.io/home/pkp_hash
+    # https://letsencrypt.org/certificates/
+    HPKP_LEAF=$(cert_dgst /etc/ssl/cert.pem)
+    HPKP_INTERMEDIATE=$(cert_dgst /etc/ssl/chain.pem)
+    #HPKP_INTERMEDIATE=$(cert_dgst /etc/ssl/certs/LE_Authority_X3.pem)
+
+    HPKP_ROOT=$(cert_dgst /etc/ssl/certs/DST_Root_CA_X3.pem)
+
+    HPKP_BACKUP_DGST_1=$(cert_dgst ${HPKP_BACKUP_CERT_1})
+    HPKP_BACKUP_DGST_2=$(cert_dgst ${HPKP_BACKUP_CERT_2})
+
+    HPKP_HEADER_NAME=Public-Key-Pins-Report-Only
+    if [ "${NGINX_ENV}" == "production" ]; then
+        HPKP_HEADER_NAME=Public-Key-Pins
+    fi
+    sed -i "s@add_header Public-Key-Pins.*@add_header ${HPKP_HEADER_NAME} 'pin-sha256=\"${HPKP_LEAF}\"; pin-sha256=\"${HPKP_INTERMEDIATE}\"; pin-sha256=\"${HPKP_ROOT}\"; pin-sha256=\"${HPKP_BACKUP_DGST_1}\"; pin-sha256=\"${HPKP_BACKUP_DGST_2}\"; report-uri=\"${HPKP_REPORT_URI}\"; max-age=5184000; includeSubDomains';@g" /etc/nginx/conf/header/https.conf
+    cat /etc/nginx/conf/header/https.conf | grep Public-Key-Pins
+}
+
+hpkp
