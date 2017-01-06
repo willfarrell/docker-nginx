@@ -26,6 +26,7 @@ docker-compose up -d
 
 ## TODO
 - switch default to alpine
+- use https://github.com/mcuadros/ofelia for the cron process
 - Travis CI testing
 - RSA option
 - Unit test for ENV replacement
