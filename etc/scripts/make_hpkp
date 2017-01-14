@@ -8,8 +8,8 @@ function cert_dgst {
 function hpkp {
     # https://report-uri.io/home/pkp_hash
     # https://letsencrypt.org/certificates/
-    HPKP_LEAF=$(cert_dgst /etc/ssl/cert.pem)
-    HPKP_INTERMEDIATE=$(cert_dgst /etc/ssl/chain.pem)
+    HPKP_LEAF=$(cert_dgst /etc/ssl/${NGINX_DOMAIN}/cert.pem)
+    HPKP_INTERMEDIATE=$(cert_dgst /etc/ssl/${NGINX_DOMAIN}/chain.pem)
     #HPKP_INTERMEDIATE=$(cert_dgst /etc/ssl/certs/LE_Authority_X3.pem)
 
     HPKP_ROOT=$(cert_dgst /etc/ssl/certs/DST_Root_CA_X3.pem)

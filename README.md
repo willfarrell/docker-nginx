@@ -1,6 +1,6 @@
 # nginx
 
-Creates ECDSA certs based on ENV
+base nginx image w/ prebuild nginx confs
 
 ## Use
 ```Dockerfile
@@ -24,17 +24,42 @@ docker-compose build
 docker-compose up -d
 ```
 
-## TODO
-- switch default to alpine
-- use https://github.com/mcuadros/ofelia for the cron process
-- Travis CI testing
-- RSA option
-- Unit test for ENV replacement
-- move letsencrypt into its own docker container
-- allow multiple domains
+## letsencrypt
+docker build --tag letsencrypt letsencrypt
+docker stop letsencrypt
+docker rm letsencrypt
+
+# private
+docker run \
+    --volumes-from nginx_nginx_1 \
+    --env-file letsencrypt.env \
+    willfarrell/letsencrypt \
+    dehydrated \
+        --cron --domain certbot.willfarrell.ca \
+        --hook dehydrated-dns \
+        --challenge dns-01
+
+# tmp
+docker run \
+    --volumes-from nginx_nginx_1 \
+    --env-file letsencrypt.env \
+    willfarrell/letsencrypt \
+    ls /etc/ssl
+
+# public
+docker run -d \
+    --volumes-from nginx_nginx_1 \
+    --env-file letsencrypt.env \
+    willfarrell/letsencrypt \
+    dehydrated \
+        --cron --domain certbot.willfarrell.ca \
+        --challenge http-01
+
+docker exec -it nginx_nginx_1 /etc/scripts/make_hpkp
+docker exec -it nginx_nginx_1 /etc/init.d/nginx reload                                                                          
 
 ## ENV
-```
+```bash
 # development: self-signed cert
 # staging: untrusted letsencrypt signed cert
 # production: trusted letsencrypt signed cert

@@ -9,17 +9,17 @@ if [ "${1}" = 'nginx' ]; then
     /etc/scripts/make_csp
 
     if [ "${NGINX_ENV}" == 'staging' ] || [ "${NGINX_ENV}" == 'production' ]; then
-        /etc/scripts/make_letsencrypt_cert
+        while [ ! -f /etc/ssl/${NGINX_DOMAIN}/privkey.pem ] \
+            || [ ! -f /etc/ssl/${NGINX_DOMAIN}/cert.pem ] \
+            || [ ! -f /etc/ssl/${NGINX_DOMAIN}/chain.pem ] \
+            || [ ! -f /etc/ssl/${NGINX_DOMAIN}/fullchain.pem ]; do
+            echo "docker run willfarrell/letsencrypt ..."
+            sleep 10;
+         done;
 
-        # run twice a day
-        MIN=$((RANDOM%59))
-        HOUR=$((RANDOM%6))
-        HOUR2=$(($HOUR+12))
-        echo "${MIN} ${HOUR},${HOUR2} * * * /etc/scripts/make_letsencrypt_cert" > /etc/cron.d/certbot
-        cat /etc/cron.d/certbot
-        service cron start
+         /etc/scripts/make_hpkp
     else
-        /etc/scripts/make_ecdsa_cert ${NGINX_DOMAIN}
+        /etc/scripts/make_ecdsa_cert
     fi
 
     # validate configs

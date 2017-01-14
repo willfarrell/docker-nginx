@@ -14,10 +14,11 @@ services:
      - "80:80"
      - "443:443"
     env_file:
-     - nginx.sample.env
+     - nginx.env
     volumes:
+     - "/etc/ssl"
+     - "/var/www/.well-known/acme-challenge"
      - "/var/log/nginx"
-     #- "/etc/ssl"
 
   node:
     build: test/node

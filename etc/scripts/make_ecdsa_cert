@@ -2,7 +2,7 @@
 
 cd /etc/ssl;
 
-if [ -z "$1" ]; then
+if [ -z "${NGINX_DOMAIN}" ]; then
     echo "param domain is required."
     exit 1
 fi
@@ -44,6 +44,6 @@ make() {
 }
 
 
-make $1
+make ${NGINX_DOMAIN}
 
 echo "Done!"
