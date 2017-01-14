@@ -12,7 +12,7 @@ function hpkp {
     HPKP_INTERMEDIATE=$(cert_dgst /etc/ssl/${NGINX_DOMAIN}/chain.pem)
     #HPKP_INTERMEDIATE=$(cert_dgst /etc/ssl/certs/LE_Authority_X3.pem)
 
-    HPKP_ROOT=$(cert_dgst /etc/ssl/certs/DST_Root_CA_X3.pem)
+    HPKP_ROOT=$(cert_dgst /etc/ssl/certs/ca-cert-DST_Root_CA_X3.pem)
 
     HPKP_BACKUP_DGST_1=$(cert_dgst ${HPKP_BACKUP_CERT_1})
     HPKP_BACKUP_DGST_2=$(cert_dgst ${HPKP_BACKUP_CERT_2})
