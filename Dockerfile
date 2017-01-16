@@ -1,8 +1,5 @@
 FROM library/nginx:1.11-alpine
 
-# TODO add in deamon off in config
-# TODO add in nginx user
-
 RUN apk --no-cache add bash ca-certificates openssl
 
 COPY etc/scripts/ /etc/scripts/
