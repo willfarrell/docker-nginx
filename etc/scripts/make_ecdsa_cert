@@ -1,11 +1,13 @@
 #!/bin/bash
 
-cd /etc/ssl;
 
 if [ -z "${NGINX_DOMAIN}" ]; then
     echo "param domain is required."
     exit 1
 fi
+
+mkdir -p /etc/ssl/${NGINX_DOMAIN}
+cd /etc/ssl/${NGINX_DOMAIN};
 
 # cert.pem  chain.pem  fullchain.pem  privkey.pem
 
