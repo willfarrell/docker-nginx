@@ -4,10 +4,13 @@ FOLDER=${1-'/etc/nginx'}
 
 # TODO replace w/ ${ENV:DEFAULT}
 while IFS='=' read -r name value ; do
+    # skip reserved ENV w/ wildchar
+    if [ "${name}" == "no_proxy" ]; then continue; fi;
+
     # repalce ${name}, ${name|default}, ${name | default} => value
-    echo ${name}=${value}
-    find ${FOLDER} -type f -name "*.conf" -print0 | xargs -0 sed -i.bak -r 's@\$\{'${name}' ?(|\|[^\}]{1,})}@'${value}'@g'
+    #echo ${name}=${value}
+    find ${FOLDER} -type f -name "*.conf" -print0 | xargs -0 sed -i.bak -r 's~\$\{'${name}' ?(|\|[^\}]{1,})}~'${value}'~g'
 done < <(env)
 
 # allow fallback to set defaults if ENV unset ${KEY | default}
-find ${FOLDER} -type f -name "*.conf" -print0 | xargs -0 sed -i.bak -r 's@\$\{[^\|]{1,}\| ?([^\}]{1,})}$@\1@g'
+find ${FOLDER} -type f -name "*.conf" -print0 | xargs -0 sed -i.bak -r 's~\$\{[^\|]{1,}\| ?([^\}]{1,})}$~\1~g'
