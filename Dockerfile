@@ -1,6 +1,7 @@
 FROM library/nginx:1.11-alpine
 
-RUN apk --no-cache add bash ca-certificates openssl
+RUN apk add --no-cache --virtual .run-deps \
+        bash ca-certificates openssl
 
 COPY etc/scripts/ /etc/scripts/
 COPY etc/nginx/ /etc/nginx/
