@@ -1,3 +1,3 @@
-FROM mcuadros/ofelia:latest
+FROM crontab
 
 COPY config.ini /etc/ofelia/
