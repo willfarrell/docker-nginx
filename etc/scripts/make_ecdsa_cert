@@ -1,13 +1,12 @@
 #!/bin/bash
 
-
-if [ -z "${NGINX_DOMAIN}" ]; then
+if [ -z "$1" ]; then
     echo "param domain is required."
     exit 1
 fi
 
-mkdir -p /etc/ssl/${NGINX_DOMAIN}
-cd /etc/ssl/${NGINX_DOMAIN};
+mkdir -p /etc/ssl/$1
+cd /etc/ssl/$1;
 
 # cert.pem  chain.pem  fullchain.pem  privkey.pem
 
@@ -42,7 +41,6 @@ make() {
 	#openssl x509 -pubkey -noout -in cert.pem > pubkey.pem
 }
 
-
-make ${NGINX_DOMAIN}
+make $1
 
 #echo "Done!"

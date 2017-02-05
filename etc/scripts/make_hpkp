@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ -z "$1" ]; then
+    echo "param domain is required."
+    exit 1
+fi
+
 function cert_dgst {
     openssl x509 -noout -in $1 -pubkey | openssl asn1parse -noout -inform pem -out /etc/ssl/tmp.pem
     echo $(openssl dgst -sha256 -binary /etc/ssl/tmp.pem | openssl enc -base64)
@@ -8,8 +13,8 @@ function cert_dgst {
 function hpkp {
     # https://report-uri.io/home/pkp_hash
     # https://letsencrypt.org/certificates/
-    HPKP_LEAF=$(cert_dgst /etc/ssl/${NGINX_DOMAIN}/cert.pem)
-    HPKP_INTERMEDIATE=$(cert_dgst /etc/ssl/${NGINX_DOMAIN}/chain.pem)
+    HPKP_LEAF=$(cert_dgst /etc/ssl/$1/cert.pem)
+    HPKP_INTERMEDIATE=$(cert_dgst /etc/ssl/$1/chain.pem)
     #HPKP_INTERMEDIATE=$(cert_dgst /etc/ssl/certs/LE_Authority_X3.pem)
 
     HPKP_ROOT=$(cert_dgst /etc/ssl/certs/ca-cert-DST_Root_CA_X3.pem)
@@ -25,4 +30,4 @@ function hpkp {
     cat /etc/nginx/conf/header/https.conf | grep Public-Key-Pins
 }
 
-hpkp
+hpkp $1

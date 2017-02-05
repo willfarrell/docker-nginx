@@ -18,17 +18,17 @@ services:
 #    ports:
 #     - "3000:3000"
 
-#  letsencrypt:
-#    image: willfarrell/letsencrypt
-#    #command: dehydrated --cron --domain letsencrypt.willfarrell.ca --out /etc/ssl --challenge http-01
-#    command: dehydrated --cron --domain letsencrypt.willfarrell.ca --out /etc/ssl --hook dehydrated-dns --challenge dns-01
-#    depends_on:
-#     - nginx
-#    env_file:
-#     - letsencrypt.env
-#    volumes:
-#     - "nginx_tls_cert:/etc/ssl"
-#     - "nginx_acme_challenge:/var/www/.well-known/acme-challenge"
+  letsencrypt:
+    image: willfarrell/letsencrypt
+    #command: dehydrated --cron --out /etc/ssl --domain letsencrypt.willfarrell.ca --challenge http-01
+    command: dehydrated --cron --out /etc/ssl --domain letsencrypt.willfarrell.ca --challenge dns-01 --hook dehydrated-dns
+    depends_on:
+     - nginx
+    env_file:
+     - letsencrypt.env
+    volumes:
+     - "nginx_tls_cert:/etc/ssl"
+     - "nginx_acme_challenge:/var/www/.well-known/acme-challenge"
 
 #  crontab:
 #    build: test/crontab
