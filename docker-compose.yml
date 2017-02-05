@@ -1,31 +1,40 @@
-version: "2"
+version: "3"
 
 services:
   nginx:
-    #image: watsco/nginx
     build: .
-    restart: always
-    mem_limit: 256m
-    cpu_shares: 1024
-    read_only: false
-    security_opt:
-     - "no-new-privileges"
     ports:
      - "80:80"
      - "443:443"
     env_file:
      - nginx.env
     volumes:
-     - "/etc/ssl"
-     - "/var/www/.well-known/acme-challenge"
+     - "nginx_tls_cert:/etc/ssl"
+     - "nginx_acme_challenge:/var/www/.well-known/acme-challenge"
      - "/var/log/nginx"
 
-  node:
-    build: test/node
-    ports:
-     - "3000:3000"
+#  node:
+#    build: test/node
+#    ports:
+#     - "3000:3000"
 
-  crontab:
-    build: test/crontab
-    volumes:
-     - "/var/run/docker.sock:/var/run/docker.sock"
+#  letsencrypt:
+#    image: willfarrell/letsencrypt
+#    #command: dehydrated --cron --domain letsencrypt.willfarrell.ca --out /etc/ssl --challenge http-01
+#    command: dehydrated --cron --domain letsencrypt.willfarrell.ca --out /etc/ssl --hook dehydrated-dns --challenge dns-01
+#    depends_on:
+#     - nginx
+#    env_file:
+#     - letsencrypt.env
+#    volumes:
+#     - "nginx_tls_cert:/etc/ssl"
+#     - "nginx_acme_challenge:/var/www/.well-known/acme-challenge"
+
+#  crontab:
+#    build: test/crontab
+#    volumes:
+#     - "/var/run/docker.sock:/var/run/docker.sock"
+
+volumes:
+  nginx_tls_cert:
+  nginx_acme_challenge:
