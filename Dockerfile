@@ -11,5 +11,9 @@ COPY www/ /var/www/
 COPY docker-entrypoint.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
+#RUN apk add --no-cache --virtual .health-check curl
+#HEALTHCHECK --interval=5s --timeout=3s \
+#    CMD curl --silent --fail http://localhost/robots.txt || exit 1
+
 WORKDIR /etc/nginx
 CMD ["nginx", "-g", "daemon off;"]
