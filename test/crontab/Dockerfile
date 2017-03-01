@@ -1,3 +1,3 @@
-FROM crontab
+FROM willfarrell/crontab
 
-COPY config.ini /etc/ofelia/
+COPY config.json ${HOME_DIR}/

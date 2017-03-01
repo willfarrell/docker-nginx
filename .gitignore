@@ -3,6 +3,8 @@
 
 etc/nginx/conf.d/sample.conf
 
+env/*.env
+
 # Logs
 logs
 *.log

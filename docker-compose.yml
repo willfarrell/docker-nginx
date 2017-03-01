@@ -7,33 +7,23 @@ services:
      - "80:80"
      - "443:443"
     env_file:
-     - nginx.env
+     - env/nginx.env
     volumes:
      - "nginx_tls_cert:/etc/ssl"
      - "nginx_acme_challenge:/var/www/.well-known/acme-challenge"
      - "/var/log/nginx"
 
-#  node:
-#    build: test/node
-#    ports:
-#     - "3000:3000"
-
-  letsencrypt:
-    image: willfarrell/letsencrypt
-    #command: dehydrated --cron --out /etc/ssl --domain letsencrypt.willfarrell.ca --challenge http-01
-    command: dehydrated --cron --out /etc/ssl --domain letsencrypt.willfarrell.ca --challenge dns-01 --hook dehydrated-dns
-    depends_on:
-     - nginx
-    env_file:
-     - letsencrypt.env
-    volumes:
-     - "nginx_tls_cert:/etc/ssl"
-     - "nginx_acme_challenge:/var/www/.well-known/acme-challenge"
+  node:
+    build: test/node
+    ports:
+     - "3000:3000"
 
 #  crontab:
 #    build: test/crontab
 #    volumes:
-#     - "/var/run/docker.sock:/var/run/docker.sock"
+#    # docker
+#     - "/var/run/docker.sock:/var/run/docker.sock:ro"
+#     - "./env:/opt/env:ro"
 
 volumes:
   nginx_tls_cert:

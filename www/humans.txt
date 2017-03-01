@@ -1,0 +1,15 @@
+/* the humans responsible & colophon */
+/* humanstxt.org */
+
+/* TEAM */
+  Developer: will Farrell
+  Site: willfarrell.ca
+  Site: farrelllabs.com
+  Twitter: @willfarrell
+  Location: Calgary, AB
+
+/* THANKS */
+  Names (& URL):
+
+/* SITE */
+  Standards: docker, nginx
