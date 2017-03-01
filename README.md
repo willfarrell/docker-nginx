@@ -78,12 +78,6 @@ CSP_REPORT_URI=https://*****.report-uri.io/r/default/csp/enforce
 
 ## Sample.conf
 ```
-#daemon off;
-#worker_processes auto;
-#events {
-#  worker_connections 4096;
-#}
-
 server_tokens off;
 
 include		conf/logging.conf;
@@ -94,36 +88,60 @@ include		conf/forcehttps.conf;
 proxy_cache_path /tmp/cache keys_zone=microcache:10m levels=1:2 inactive=300s max_size=100m use_temp_path=off;
 
 server {
+    server_name $host;
+
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
 	include		conf/https.ecdsa.conf;
 
-    access_log  /var/log/nginx/access.log logstash buffer=256k flush=10s;
+    access_log  /var/log/nginx/access.log logstash_params buffer=256k flush=10s;
 	error_log	/var/log/nginx/error.log;
 
 	root		/var/www;
 
 	gzip_static on;
 
+    # Custom Error Pages
+	error_page 504 /504.json;
+    location = /504.json {
+        root /usr/share/nginx/html;
+        internal;
+    }
+
 	location / {
         include     conf/header/security.conf;
         include     conf/header/https.conf;
 	    include		conf/header/cors.conf;
 
+	    #try_files $uri $uri/index.html =404;
 	    try_files $uri @rewriteapp;
     }
 
     location @rewriteapp {
         include     conf/header/security.conf;
         include     conf/header/https.conf;
-	    include		conf/header/cors.conf;
-        include     conf/header/microcache.conf;
+	    include	    conf/header/cors.conf;
+	    add_header  X-Request-Id $request_id;
+	    
+	    include	    conf/header/proxy_upgrade.conf;
 
         include     conf/microcache.conf;
-        proxy_pass  http://apigateway;
+
+        # Requested here to allow $request_body to get generated
+        access_log        /var/log/nginx/access.log logstash_params buffer=256k flush=10s;
+        proxy_set_header  X-Request-Id $request_id;
+        proxy_pass        http://apigateway;
+
+        # Request Timeout
+        proxy_connect_timeout       120;
+        proxy_send_timeout          120;
+        proxy_read_timeout          120;
+        send_timeout                120;
     }
 }
 
 upstream apigateway  {
-    keepalive 20;
-    server node:3000 fail_timeout=5s max_fails=5;
+     keepalive 20;
+     server node:3000 fail_timeout=5s max_fails=5;
 }
 ```
