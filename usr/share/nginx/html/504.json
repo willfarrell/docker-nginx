@@ -1,0 +1,7 @@
+{
+	"errors": [{
+		"status": "504",
+		"title":  "Gateway Time-out",
+		"detail": "Your request surpassed the our timeout duration of 120s."
+	}]
+}
