@@ -9,9 +9,9 @@ services:
     env_file:
      - env/nginx.env
     volumes:
-     - "nginx_tls_cert:/etc/ssl"
-     - "nginx_acme_challenge:/var/www/.well-known/acme-challenge"
-     - "/var/log/nginx"
+     - "nginx_tls_cert:/etc/ssl:rw"
+     - "nginx_acme_challenge:/var/www/.well-known/acme-challenge:ro"
+     - "nginx_logs:/var/log/nginx:rw"
 
   node:
     build: test/node
@@ -28,3 +28,4 @@ services:
 volumes:
   nginx_tls_cert:
   nginx_acme_challenge:
+  nginx_logs:

@@ -1,0 +1,42 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+    echo "param domain is required."
+    exit 1
+fi
+
+mkdir -p /etc/ssl/$1
+cd /etc/ssl/$1;
+
+# cert.pem  chain.pem  fullchain.pem  privkey.pem
+
+make() {
+	openssl version
+
+    #echo "-----> Generating SSL 2048 RSA Key ($1)"
+    openssl req -newkey rsa:2048 -nodes -keyout privkey.pem
+
+    #echo "-----> Make a certificate request, request signed via SHA512 ($1)"
+	echo -e "\n\n\n\n\n$1\n\n\n\n" | openssl req -new -sha512 -key privkey.pem -nodes -out reqcert.pem &> /dev/null
+
+    # Verify CSR
+	openssl req -noout -text -in reqcert.pem &> /dev/null
+	
+	#echo "-----> Create (self-signed) certificate. This certificate will sign using SHA512 ($1)"
+
+	echo -e "\n\n\n\n\n$1\n\n\n\n" | openssl req -x509 -sha512 -days 1095 -key privkey.pem -in reqcert.pem -out cert.pem &> /dev/null
+
+	# make chains
+	cp cert.pem chain.pem
+	cp cert.pem fullchain.pem
+
+	#echo "-----> Export the certificate and private key, AES256 encrypt it ($1)"
+	#openssl pkcs12 -export -aes256 -out privkey.pem.pfx -in cert.pem.pem -inkey privkey.pem -name "ECC-cert"
+	
+	#echo "-----> Make public key from CRT"
+	#openssl x509 -pubkey -noout -in cert.pem > pubkey.pem
+}
+
+make $1
+
+#echo "Done!"
