@@ -11,9 +11,9 @@ cd /etc/ssl/$1;
 # cert.pem  chain.pem  fullchain.pem  privkey.pem
 
 make() {
-	# Check if $1 exists
 	openssl version
 	#openssl ecparam -list_curves
+
 	#echo "-----> Create a new named curve ($1)"
 	openssl ecparam -genkey -name secp384r1 -out privkey.pem
 	
