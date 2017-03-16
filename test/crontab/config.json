@@ -1,7 +1,7 @@
 [{
 	"comment":"Regenerate Certificate then reload nginx",
 	"schedule":"43 6,18 * * *",
-	"command":"sh -c 'dehydrated --cron --out /etc/ssl --domain ${LE_DOMAIN} --challenge dns-01 --hook dehydrated-dns'",
+	"command":"sh -c 'dehydrated --cron --accept-terms --out /etc/ssl --domain ${LE_DOMAIN} --challenge dns-01 --hook dehydrated-dns'",
 	"dockerargs":"--env-file /opt/env/letsencrypt.env -v nginx_nginx_tls_cert:/etc/ssl:rw -v nginx_nginx_acme_challenge:/var/www/.well-known/acme-challenge:rw",
 	"image":"willfarrell/letsencrypt",
 	"trigger":[{
