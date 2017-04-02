@@ -36,6 +36,9 @@ if [ "${1}" = 'nginx' ]; then
     fi
     #done
 
+	# custom startup script
+	/etc/scripts/bootstrap
+
 fi
 
 echo "${@}"
