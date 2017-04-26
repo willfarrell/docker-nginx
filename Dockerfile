@@ -1,4 +1,4 @@
-FROM library/nginx:1.11-alpine
+FROM library/nginx:1.13-alpine
 
 RUN apk add --no-cache --virtual .run-deps \
         bash ca-certificates openssl
