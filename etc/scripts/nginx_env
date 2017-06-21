@@ -12,4 +12,4 @@ while IFS='=' read -r name value ; do
 done < <(env)
 
 # allow fallback to set defaults if ENV unset ${KEY | default}
-find ${FOLDER} -type f -name "*.conf" -print0 | xargs -0 sed -i.bak -r 's~\$\{[^\|]{1,}\| ?([^\}]{1,})}$~\1~g'
+find ${FOLDER} -type f -name "*.conf" -print0 | xargs -0 sed -i.bak -r 's~\$\{[^\|]{1,}[\|:] ?([^\}]{1,})}$~\1~g'
