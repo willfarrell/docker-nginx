@@ -28,7 +28,7 @@ if [ "${1}" = 'nginx' ]; then
     if [ ! -f /etc/ssl/${domain}/cert.pem ]; then
         /etc/scripts/make_ecdsa_cert ${domain}
         rm /etc/ssl/${domain}/cert.pem
-        echo "docker run -e ... -v ... willfarrell/letsencrypt dehydrated --cron --out /etc/ssl --domain ${domain} --challenge ..."
+        echo "docker run -e ... -v ... willfarrell/letsencrypt dehydrated --cron --out /etc/ssl --challenge ..."
         update_hpkp ${domain} &
         nginx -t
     else

@@ -26,8 +26,9 @@ function hpkp {
     if [ "${NGINX_ENV}" == "production" ]; then
         HPKP_HEADER_NAME=Public-Key-Pins
     fi
-    sed -i "s@add_header Public-Key-Pins.*@add_header ${HPKP_HEADER_NAME} 'pin-sha256=\"${HPKP_LEAF}\"; pin-sha256=\"${HPKP_INTERMEDIATE}\"; pin-sha256=\"${HPKP_ROOT}\"; pin-sha256=\"${HPKP_BACKUP_DGST_1}\"; pin-sha256=\"${HPKP_BACKUP_DGST_2}\"; report-uri=\"${HPKP_REPORT_URI}\"; max-age=5184000; includeSubDomains';@g" /etc/nginx/conf/header/https.conf
-    cat /etc/nginx/conf/header/https.conf | grep Public-Key-Pins
+    sed -i "s@add_header Public-Key-Pins.*@add_header ${HPKP_HEADER_NAME} 'pin-sha256=\"${HPKP_LEAF}\"; pin-sha256=\"${HPKP_INTERMEDIATE}\"; pin-sha256=\"${HPKP_ROOT}\"; pin-sha256=\"${HPKP_BACKUP_DGST_1}\"; pin-sha256=\"${HPKP_BACKUP_DGST_2}\"; report-uri=\"${HPKP_REPORT_URI}\"; max-age=5184000; includeSubDomains';@g" /etc/nginx/conf/header_https.conf
+    sed -i "s@add_header Public-Key-Pins.*@add_header ${HPKP_HEADER_NAME} 'pin-sha256=\"${HPKP_LEAF}\"; pin-sha256=\"${HPKP_INTERMEDIATE}\"; pin-sha256=\"${HPKP_ROOT}\"; pin-sha256=\"${HPKP_BACKUP_DGST_1}\"; pin-sha256=\"${HPKP_BACKUP_DGST_2}\"; report-uri=\"${HPKP_REPORT_URI}\"; max-age=5184000; includeSubDomains';@g" /etc/nginx/conf/$1/header_https.conf
+    cat /etc/nginx/conf/header_https.conf | grep Public-Key-Pins
 }
 
 hpkp $1

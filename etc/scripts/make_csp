@@ -6,7 +6,7 @@ function csp {
     if [ "${NGINX_ENV}" == "production" ]; then
         CSP_HEADER_NAME=Content-Security-Policy
     fi
-    find /etc/nginx/conf.d -type f -name "*.conf" -print0 | xargs -0 sed -i "s@Content-Security-Policy-Report.* @${CSP_HEADER_NAME} @g"
+    find /etc/nginx -type f -name "*.conf" -print0 | xargs -0 sed -i "s@Content-Security-Policy-Report.* @${CSP_HEADER_NAME} @g"
 }
 
 csp
