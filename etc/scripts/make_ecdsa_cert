@@ -11,7 +11,7 @@ cd /etc/ssl/$1;
 # cert.pem  chain.pem  fullchain.pem  privkey.pem
 
 make() {
-	openssl version
+	#openssl version
 	#openssl ecparam -list_curves
 
 	#echo "-----> Create a new named curve ($1)"

@@ -1,0 +1,48 @@
+#!/bin/bash
+
+update_hpkp() {
+    if [ ! -f /etc/ssl/$1/cert.pem ]; then
+        sleep 5
+        update_hpkp $1 &
+    else
+        echo "certificate for $1 found"
+        /etc/scripts/make_hpkp $1
+        nginx -t
+        set +e
+        nginx -s reload 2> /dev/null
+        set -e
+    fi
+
+}
+
+IFS=',' read -r -a domains <<< "${NGINX_DOMAIN}"
+for domain in "${domains[@]}"; do
+
+    mkdir -p /etc/nginx/conf/$domain
+
+    echo "${domain}"
+    if [ ! -f /etc/ssl/${domain}/cert.pem ]; then
+        /etc/scripts/make_ecdsa_cert ${domain}
+        # force renew
+        rm /etc/ssl/${domain}/cert.pem
+        echo "docker run -e ... -v ... willfarrell/letsencrypt dehydrated --cron --domain ${domain} --out /etc/ssl --challenge ..."
+        update_hpkp ${domain} &
+        nginx -t
+    else
+        update_hpkp ${domain}
+    fi
+
+    ## https_ecdsa.conf
+    cp /etc/nginx/conf/https_ecdsa.conf /etc/nginx/conf/$domain/https_ecdsa.conf
+    sed -i -r 's~\$\{DOMAIN ?(|\|[^\}]{1,})}~'${domain}'~g' /etc/nginx/conf/$domain/https_ecdsa.conf
+
+    ## header.conf
+    cp /etc/nginx/conf/header_https.conf /etc/nginx/conf/$domain/header_https.conf
+    sed -i -r 's~\$\{'DOMAIN' ?(|\|[^\}]{1,})}~'${domain}'~g' /etc/nginx/conf/$domain/header_https.conf
+
+    ## server.443.conf
+    cp /etc/nginx/conf/server.443.conf /etc/nginx/conf/$domain/server.443.conf
+    sed -i -r 's~\$\{DOMAIN ?(|\|[^\}]{1,})}~'${domain}'~g' /etc/nginx/conf/$domain/server.443.conf
+
+    echo "include conf/$domain/server.443.conf;" >> /etc/nginx/conf.d/default.conf
+done
