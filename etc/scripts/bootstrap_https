@@ -34,15 +34,15 @@ for domain in "${domains[@]}"; do
 
     ## https_ecdsa.conf
     cp /etc/nginx/conf/https_ecdsa.conf /etc/nginx/conf/$domain/https_ecdsa.conf
-    sed -i -r 's~\$\{DOMAIN ?(|\|[^\}]{1,})}~'${domain}'~g' /etc/nginx/conf/$domain/https_ecdsa.conf
+    sed -i -r 's~\$\{__DOMAIN__ ?(|\|[^\}]{1,})}~'${domain}'~g' /etc/nginx/conf/$domain/https_ecdsa.conf
 
     ## header.conf
     cp /etc/nginx/conf/header_https.conf /etc/nginx/conf/$domain/header_https.conf
-    sed -i -r 's~\$\{'DOMAIN' ?(|\|[^\}]{1,})}~'${domain}'~g' /etc/nginx/conf/$domain/header_https.conf
+    sed -i -r 's~\$\{__DOMAIN__ ?(|\|[^\}]{1,})}~'${domain}'~g' /etc/nginx/conf/$domain/header_https.conf
 
     ## server.443.conf
     cp /etc/nginx/conf/server.443.conf /etc/nginx/conf/$domain/server.443.conf
-    sed -i -r 's~\$\{DOMAIN ?(|\|[^\}]{1,})}~'${domain}'~g' /etc/nginx/conf/$domain/server.443.conf
+    sed -i -r 's~\$\{__DOMAIN__ ?(|\|[^\}]{1,})}~'${domain}'~g' /etc/nginx/conf/$domain/server.443.conf
 
     echo "include conf/$domain/server.443.conf;" >> /etc/nginx/conf.d/default.conf
 done
