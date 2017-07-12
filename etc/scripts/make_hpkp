@@ -31,4 +31,7 @@ function hpkp {
     cat /etc/nginx/conf/header_https.conf | grep Public-Key-Pins
 }
 
-hpkp $1
+IFS=',' read -r -a domains <<< "${1}"
+for domain in "${domains[@]}"; do
+    hpkp $domain
+done
