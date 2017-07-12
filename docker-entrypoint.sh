@@ -22,19 +22,19 @@ if [ "${1}" = 'nginx' ]; then
     /etc/scripts/nginx_env
     /etc/scripts/make_csp
 
-    #for domain in $(echo ${NGINX_DOMAIN} | sed "s/,/ /g"); do
-    domain=${NGINX_DOMAIN}
-    echo "setup certificate for ${domain}"
-    if [ ! -f /etc/ssl/${domain}/cert.pem ]; then
-        /etc/scripts/make_ecdsa_cert ${domain}
-        rm /etc/ssl/${domain}/cert.pem
-        echo "docker run -e ... -v ... willfarrell/letsencrypt dehydrated --cron --out /etc/ssl --challenge ..."
-        update_hpkp ${domain} &
-        nginx -t
-    else
-        update_hpkp ${domain}
-    fi
-    #done
+    for domain in $(echo ${NGINX_DOMAIN} | sed "s/,/ /g"); do
+        #domain=${NGINX_DOMAIN}
+        echo "setup certificate for ${domain}"
+        if [ ! -f /etc/ssl/${domain}/cert.pem ]; then
+            /etc/scripts/make_ecdsa_cert ${domain}
+            rm /etc/ssl/${domain}/cert.pem
+            echo "docker run -e ... -v ... willfarrell/letsencrypt dehydrated --cron --domain ${domain} --out /etc/ssl --challenge ..."
+            update_hpkp ${domain} &
+            nginx -t
+        else
+            update_hpkp ${domain}
+        fi
+    done
 
 	# custom startup script
 	/etc/scripts/bootstrap
