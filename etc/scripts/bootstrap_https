@@ -36,6 +36,10 @@ for domain in "${domains[@]}"; do
     cp /etc/nginx/conf/https_ecdsa.conf /etc/nginx/conf/$domain/https_ecdsa.conf
     sed -i -r 's~\$\{__DOMAIN__ ?(|\|[^\}]{1,})}~'${domain}'~g' /etc/nginx/conf/$domain/https_ecdsa.conf
 
+    ## https_rsa.conf
+    cp /etc/nginx/conf/https_rsa.conf /etc/nginx/conf/$domain/https_rsa.conf
+    sed -i -r 's~\$\{__DOMAIN__ ?(|\|[^\}]{1,})}~'${domain}'~g' /etc/nginx/conf/$domain/https_rsa.conf
+
     ## header.conf
     cp /etc/nginx/conf/header_https.conf /etc/nginx/conf/$domain/header_https.conf
     sed -i -r 's~\$\{__DOMAIN__ ?(|\|[^\}]{1,})}~'${domain}'~g' /etc/nginx/conf/$domain/header_https.conf
