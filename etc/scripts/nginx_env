@@ -1,6 +1,6 @@
-#!/bin/bash
+#! /bin/bash
 
-FOLDER=${1-'/etc/nginx'}
+FOLDER=${1-'/var/www'}
 
 while IFS='=' read -r name value ; do
     # skip reserved ENV w/ wildchar
@@ -8,10 +8,10 @@ while IFS='=' read -r name value ; do
 
     # replace ${name}, ${name|default}, ${name | default} => value
     #echo ${name}=${value}
-    find ${FOLDER} -type f -name "*.conf" -print0 | xargs -0 sed -i.bak -r 's~\$\{'${name}' ?(|[\|:][^\}]{1,})}~'${value}'~g'
+    find ${FOLDER} -type f \( -name "*.js" -or -name "*.html" -or -name "*.css" \) -print0 | xargs -0 sed -i.bak -r 's~\$\{'${name}' ?(|[\|:][^\}]{1,})}~'${value}'~g'
 done < <(env)
 
 # allow fallback to set defaults if ENV unset ${KEY | default}
-find ${FOLDER} -type f -name "*.conf" -print0 | xargs -0 sed -i.bak -r 's~\$\{[^\|]{1,}[\|:] ?([^\}]{1,})}$~\1~g'
+find ${FOLDER} -type f \( -name "*.js" -or -name "*.html" -or -name "*.css" \) -print0 | xargs -0 sed -i.bak -r 's~\$\{[^\|]{1,}[\|:] ?([^\}]{1,})}$~\1~g'
 
 find ${FOLDER} -type f -name "*.bak" -print0 | xargs -0 rm
